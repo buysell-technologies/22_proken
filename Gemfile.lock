@@ -184,6 +184,7 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
+    slack-notifier (2.4.0)
     slack-ruby-block-kit (0.17.0)
     slack-ruby-client (1.0.0)
       faraday (>= 1.0)
@@ -239,7 +240,8 @@ DEPENDENCIES
   rails (~> 5.2.8)
   sass-rails (~> 5.0)
   selenium-webdriver
-  slack-ruby-block-kit
+  slack-notifier
+  slack-ruby-block-kit (~> 0.17.0)
   slack-ruby-client
   spring
   spring-watcher-listen (~> 2.0.0)
