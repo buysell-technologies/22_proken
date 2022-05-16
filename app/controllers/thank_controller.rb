@@ -1,3 +1,5 @@
+require 'slack-ruby-block-kit'
+
 class ThankController < ApplicationController
   WEBHOOK_URL = ENV['SLACK_WEBHOOK_URL']
   CHANNEL = "#プロ研"
@@ -32,7 +34,137 @@ class ThankController < ApplicationController
   def encoded_home_tab_block_msg(team)
     channel_id = team.share_channel_id
     channel_name = team.share_channel_name
-      msg = "{ここにjson貼ってくれーー}"
+      msg = "{
+        "type": "home",
+        "blocks": [
+          {
+            "type": "header",
+            "text": {
+              "type": "plain_text",
+              "text": "感謝を送ろう",
+              "emoji": true
+            }
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*誰に*\n感謝する人選択しよう"
+            },
+            "accessory": {
+              "type": "static_select",
+              "placeholder": {
+                "type": "plain_text",
+                "emoji": true,
+                "text": "例: バイセル 太郎"
+              },
+              "options": [
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "emoji": true,
+                    "text": "Aさん"
+                  },
+                  "value": "value-0"
+                },
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "emoji": true,
+                    "text": "Bさん"
+                  },
+                  "value": "value-1"
+                }
+              ]
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*バリュー*\n感謝する内容に対応するバリューを選択してください"
+            },
+            "accessory": {
+              "type": "static_select",
+              "placeholder": {
+                "type": "plain_text",
+                "emoji": true,
+                "text": "例: さすが"
+              },
+              "options": [
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "emoji": true,
+                    "text": "さすが"
+                  },
+                  "value": "value-0"
+                },
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "emoji": true,
+                    "text": "すぐ"
+                  },
+                  "value": "value-1"
+                },
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "emoji": true,
+                    "text": "おそれず"
+                  },
+                  "value": "value-2"
+                },
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "emoji": true,
+                    "text": "みずから"
+                  },
+                  "value": "value-3"
+                }
+              ]
+            }
+          },
+          {
+            "dispatch_action": true,
+            "type": "input",
+            "element": {
+              "type": "plain_text_input",
+              "dispatch_action_config": {
+                "trigger_actions_on": [
+                  "on_character_entered"
+                ]
+              },
+              "action_id": "plain_text_input-action"
+            },
+            "label": {
+              "type": "plain_text",
+              "text": "感謝する内容",
+              "emoji": true
+            }
+          },
+          {
+            "type": "actions",
+            "elements": [
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "emoji": true,
+                  "text": "送信"
+                },
+                "style": "primary",
+                "value": "click_me_123"
+              }
+            ]
+          }
+        ]
+      }"
     encoded_msg = ERB::Util.url_encode(msg)
     encoded_msg
   end
