@@ -37,6 +37,13 @@ gem 'slack-ruby-client'
 gem 'slack-ruby-block-kit', '~> 0.17.0'
 gem 'slack-notifier'
 
+gem 'dotenv-rails'
+gem 'annotate'
+gem 'pry-rails'
+gem 'pry-byebug'
+
+gem 'seed-fu'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 

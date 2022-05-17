@@ -1,13 +1,6 @@
 require 'slack-ruby-block-kit'
 
 class ThankController < ApplicationController
-  WEBHOOK_URL = ENV['SLACK_WEBHOOK_URL']
-  CHANNEL = "#プロ研"
-  USER_NAME = "玉利 泰人"
-
-  def send(message)
-    Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME).ping('message')
-  end
 
   def respond
     if params[:event][:type] == 'app_home_opened'
@@ -34,7 +27,7 @@ class ThankController < ApplicationController
   def encoded_home_tab_block_msg(team)
     channel_id = team.share_channel_id
     channel_name = team.share_channel_name
-      msg = "{
+      msg = {
         "type": "home",
         "blocks": [
           {
@@ -164,7 +157,7 @@ class ThankController < ApplicationController
             ]
           }
         ]
-      }"
+      }
     encoded_msg = ERB::Util.url_encode(msg)
     encoded_msg
   end

@@ -1,0 +1,2 @@
+class MasterValueController < ApplicationController
+end
