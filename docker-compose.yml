@@ -1,14 +1,14 @@
 version: "3.9"
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./tmp/db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: password
+  # db:
+  #   image: postgres
+  #   volumes:
+  #     - ./tmp/db:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_PASSWORD: password
   app:
     build: .
-    command: bundle exec puma -C config/puma.rb
+    command: bundle exec puma -C config/puma.rb -e production
     volumes:
       - .:/myapp
       - public-data:/myapp/public
@@ -16,8 +16,8 @@ services:
       - log-data:/myapp/log
     ports:
       - "3000:3000"
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
   web:
     build:
       context: ./nginx_docker
