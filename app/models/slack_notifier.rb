@@ -61,13 +61,13 @@ class SlackNotifier
       {
         "type": "input",
         "element": {
-          "type": "multi_users_select",
+          "type": "users_select",
           "placeholder": {
             "type": "plain_text",
             "text": "選択",
             "emoji": true
           },
-          "action_id": "multi_users_select-action"
+          "action_id": "users_select-action"
         },
         "label": {
           "type": "plain_text",
@@ -78,13 +78,47 @@ class SlackNotifier
       {
         "type": "input",
         "element": {
-          "type": "multi_users_select",
+          "type": "static_select",
           "placeholder": {
             "type": "plain_text",
             "text": "選択",
             "emoji": true
           },
-          "action_id": "multi_users_select-action"
+          "options": [
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "さすが",
+                "emoji": true
+              },
+              "value": "value-0"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "すぐ",
+                "emoji": true
+              },
+              "value": "value-1"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "おそれず",
+                "emoji": true
+              },
+              "value": "value-2"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "みずから",
+                "emoji": true
+              },
+              "value": "value-3"
+            }
+          ],
+          "action_id": "multi_static_select-action"
         },
         "label": {
           "type": "plain_text",
@@ -117,7 +151,7 @@ class SlackNotifier
             },
             "style": "primary",
             "value": "click_me_123",
-            "action_id": "actionId-0"
+            "action_id": "actionId-1"
           }
         ]
       }
