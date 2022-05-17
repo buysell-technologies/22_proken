@@ -10,10 +10,10 @@ services:
     build: .
     command: bundle exec puma -C config/puma.rb -e production
     volumes:
-      - .:/myapp
-      - public-data:/myapp/public
-      - tmp-data:/myapp/tmp
-      - log-data:/myapp/log
+      - .:/22_PROKEN
+      - public-data:/22_PROKEN/public
+      - tmp-data:/22_PROKEN/tmp
+      - log-data:/22_PROKEN/log
     ports:
       - "3000:3000"
     # depends_on:
@@ -22,8 +22,8 @@ services:
     build:
       context: ./nginx_docker
     volumes:
-      - public-data:/myapp/public
-      - tmp-data:/myapp/tmp
+      - public-data:/22_PROKEN/public
+      - tmp-data:/22_PROKEN/tmp
     ports:
       - 80:80
     depends_on:
