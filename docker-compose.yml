@@ -12,7 +12,7 @@ services:
     volumes:
       - .:/22_proken
       - public-data:/22_proken/public
-      - tmp-data:/22_proken/tmp
+      - tmp-data:/22_proken/tmp/sockets/
       - log-data:/22_proken/log
     ports:
       - "3000:3000"
@@ -23,11 +23,9 @@ services:
       context: ./nginx_docker
     volumes:
       - public-data:/22_proken/public
-      - tmp-data:/22_proken/tmp
+      - tmp-data:/22_proken/tmp/sockets/
     ports:
       - 80:80
-    volumes_from:
-      - app
     depends_on:
       - app
 
