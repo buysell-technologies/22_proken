@@ -1,4 +1,6 @@
 require 'slack-ruby-block-kit'
+require 'rails_helper'
+require "erb"
 
 class ThankController < ApplicationController
 

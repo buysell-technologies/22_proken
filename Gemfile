@@ -36,6 +36,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'slack-ruby-client'
 gem 'slack-ruby-block-kit', '~> 0.17.0'
 gem 'slack-notifier'
+gem 'dotenv-rails'
 
 gem 'dotenv-rails'
 gem 'annotate'
