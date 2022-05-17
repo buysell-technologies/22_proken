@@ -26,6 +26,8 @@ services:
       - tmp-data:/22_proken/tmp
     ports:
       - 80:80
+    volumes_from:
+      - app
     depends_on:
       - app
 
