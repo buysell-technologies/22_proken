@@ -6,6 +6,16 @@ class SlackNotifier
   CHANNEL = "#プロ研"
   USER_NAME = "testapp"
 
+  def create
+    @body = JSON.parse(request.body.read)
+    case @body['type']
+    when 'url_verification'
+        render json: @body
+    when 'event_callback'
+        # ..
+    end
+  end
+
   def initialize
     @client = Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME)
   end
