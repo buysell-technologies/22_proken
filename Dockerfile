@@ -5,6 +5,8 @@ COPY Gemfile /22_proken/Gemfile
 COPY Gemfile.lock /22_proken/Gemfile.lock
 RUN bundle install
 COPY . /22_proken
+RUN mkdir -p tmp/sockets
+
 
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
