@@ -23,17 +23,31 @@ class SlackController < ApplicationController
     client = Slack::Web::Client.new
     @params = JSON.parse(params[:payload])
 
-    action_id = @params['actions'][0]['action_id']
+    pp "----------------"
+    # pp JSON.parse(request.body.read)
 
-    # pp @params
+    pp @params
+
+    action_id = @params['actions'][0]['action_id']
     
     if action_id == 'actionId-1'
       sender_id = @params['user']['id']
-      getter_id = @params['view']['state']['values']['2RI6']['users_select-action']['selected_user']
       sender_user = client.users_info(user: sender_id)['user']['real_name']
+      pp sender_user
+
+      getter_block_id = @params['view']['blocks'][2]['block_id']
+      pp getter_block_id
+      getter_id = @params['view']['state']['values'][getter_block_id]['users_select-action']['selected_user']
       getter_user = client.users_info(user: getter_id)['user']['real_name']
-      value = @params['view']['state']['values']['jSQRN']['multi_static_select-action']['selected_option']['text']['text']
-      message = @params['view']['state']['values']['IpN']['plain_text_input-action']['value']
+
+      value_block_id = @params['view']['blocks'][3]['block_id']
+      value = @params['view']['state']['values'][value_block_id]['multi_static_select-action']['selected_option']['text']['text']
+      pp value
+
+      message_block_id = @params['view']['blocks'][4]['block_id']
+      message = @params['view']['state']['values'][message_block_id]['plain_text_input-action']['value']
+      pp message
+
 
       SlackNotifier.new.send_from_home(
         sender=sender_user,
@@ -66,19 +80,21 @@ class SlackController < ApplicationController
 
   def respond
     if params[:event][:type] == 'app_home_opened'
+      pp "aa"
       views_publish
     elsif params[:event][:type] == 'message' && params[:event][:text].present?
       p "ここは使い方でよさそう"
     end
   end
 
-  def views_publish()
+  def views_publish
+    pp "aa"
     user_uid = params[:event][:user]
     client = Slack::Web::Client.new
     client.views_publish(
-      token=ENV['BOT_USER_ACCESS_TOKEN'],
-      user_id=user_uid,
-      view='{"type":"home","blocks":[{"type":"header","text":{"type":"plain_text","text":"感謝を送ろう","emoji":true}},{"type":"divider"},{"type":"input","element":{"type":"users_select","placeholder":{"type":"plain_text","text":"選択","emoji":true},"action_id":"users_select-action"},"label":{"type":"plain_text","text":"メンバーの選択","emoji":true}},{"type":"input","element":{"type":"static_select","placeholder":{"type":"plain_text","text":"選択","emoji":true},"options":[{"text":{"type":"plain_text","text":"さすが","emoji":true},"value":"value-0"},{"text":{"type":"plain_text","text":"すぐ","emoji":true},"value":"value-1"},{"text":{"type":"plain_text","text":"おそれず","emoji":true},"value":"value-2"},{"text":{"type":"plain_text","text":"みずから","emoji":true},"value":"value-3"}],"action_id":"multi_static_select-action"},"label":{"type":"plain_text","text":"バリューの選択","emoji":true}},{"type":"input","element":{"type":"plain_text_input","multiline":true,"action_id":"plain_text_input-action"},"label":{"type":"plain_text","text":"感謝する内容","emoji":true}},{"type":"actions","elements":[{"type":"button","text":{"type":"plain_text","emoji":true,"text":"送信"},"style":"primary","value":"click_me_123","action_id":"actionId-1"}]}]}'
+      token: ENV['BOT_USER_ACCESS_TOKEN'],
+      user_id: "#{user_uid}",
+      view: '{"type":"home","blocks":[{"type":"header","text":{"type":"plain_text","text":"感謝を送ろう","emoji":true}},{"type":"divider"},{"type":"input","element":{"type":"users_select","placeholder":{"type":"plain_text","text":"選択","emoji":true},"action_id":"users_select-action"},"label":{"type":"plain_text","text":"メンバーの選択","emoji":true}},{"type":"input","element":{"type":"static_select","placeholder":{"type":"plain_text","text":"選択","emoji":true},"options":[{"text":{"type":"plain_text","text":"さすが","emoji":true},"value":"value-0"},{"text":{"type":"plain_text","text":"すぐ","emoji":true},"value":"value-1"},{"text":{"type":"plain_text","text":"おそれず","emoji":true},"value":"value-2"},{"text":{"type":"plain_text","text":"みずから","emoji":true},"value":"value-3"}],"action_id":"multi_static_select-action"},"label":{"type":"plain_text","text":"バリューの選択","emoji":true}},{"type":"input","element":{"type":"plain_text_input","placeholder":{"type":"plain_text","text":"例: PRのレビューがはやくて助かりました","emoji":true},"multiline":true,"action_id":"plain_text_input-action"},"label":{"type":"plain_text","text":"感謝する内容","emoji":true}},{"type":"actions","elements":[{"type":"button","text":{"type":"plain_text","emoji":true,"text":"送信"},"style":"primary","value":"click_me_123","action_id":"actionId-1"}]}]}'
     )
   end
 end
