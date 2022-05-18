@@ -3,20 +3,21 @@ class SlackNotifier
 
   # 環境SLACK_WEBHOOK_URLにwebhook urlを格納
   WEBHOOK_URL = ENV['SLACK_WEBHOOK_URL']
-  CHANNEL = "#プロ研"
-  USER_NAME = "testapp"
+  CHANNEL = "#送られる場所"
+  USER_NAME = "送られる場所"
 
   def initialize
     @client = Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME)
   end
 
-  def send(sender, recipient, value, message)
-    client.post blocks: [
+  def send_from_home(sender, getter, value, message)
+    pp WEBHOOK_URL
+    @client.post blocks: [
       {
         "type": "section",
         "text": {
           "type": "plain_text",
-          "text": "#{sender}さんが#{recipient}さんに「#{value}」しました",
+          "text": "#{sender}さんが#{getter}さんに「#{value}」で感謝しました",
           "emoji": true
         }
       },
@@ -34,16 +35,37 @@ class SlackNotifier
             "type": "button",
             "text": {
               "type": "plain_text",
-              "text": "#{recipient}さんに「#{value}」を送りますか",
+              "text": "#{getter}さんに「#{value}」を送りますか",
               "emoji": true
             },
             "value": "click_me_123",
-            "action_id": "actionId-0"
+            "action_id": "sasuga-from-thread"
           }
         ]
       }
     ]
   end
+
+  def send_from_thread(sender, message1, message2)
+    @client.post blocks: [
+      {
+        "type": "section",
+        "text": {
+          "type": "plain_text",
+          "text": "#{sender}#{message1}",
+          "emoji": true
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "> #{message2}"
+        }
+      }
+    ]
+  end
+
 
   def hoge()
     client.post blocks: [

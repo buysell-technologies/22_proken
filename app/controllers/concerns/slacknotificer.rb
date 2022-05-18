@@ -5,15 +5,15 @@ class module SlackNotifcier
 
   # 環境SLACK_WEBHOOK_URLにwebhook urlを格納
   WEBHOOK_URL = ENV['SLACK_WEBHOOK_URL']
-  CHANNEL = "#プロ研"
-  USER_NAME = "testapp"
+  CHANNEL = "#送られる場所"
+  USER_NAME = "送られる場所"
 
   def initialize
     @client = Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME)
   end
 
   def send(sender, recipient, value, message)
-    client.post blocks: [
+    @client.post blocks: [
       {
         "type": "section",
         "text": {
