@@ -1,17 +1,35 @@
-version: "3.9"
+version: "3.3"
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./tmp/db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: password
-  web:
+  # db:
+  #   image: postgres
+  #   volumes:
+  #     - ./tmp/db:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_PASSWORD: password
+  app:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bundle exec puma -C config/puma.rb -e production
     volumes:
-      - .:/myapp
+      - .:/22_proken
+      - public-data:/22_proken/public
+      - tmp-data:/22_proken/tmp/sockets/
+      - log-data:/22_proken/log
     ports:
       - "3000:3000"
+    # depends_on:
+    #   - db
+  web:
+    build:
+      context: ./nginx_docker
+    volumes:
+      - public-data:/22_proken/public
+      - tmp-data:/22_proken/tmp/sockets/
+    ports:
+      - 80:80
     depends_on:
-      - db
+      - app
+
+volumes:
+  public-data:
+  tmp-data:
+  log-data:
