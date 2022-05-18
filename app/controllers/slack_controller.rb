@@ -9,12 +9,8 @@ class SlackController < ApplicationController
   def create
     @header = request.headers
     @body = JSON.parse(request.body.read)
-    pp "------------------------------"
-    pp @body
     case @body['type']
     when 'url_verification'
-      pp "----------render--------------------"
-      pp @body
       render json: @body
     when 'event_callback'
       respond
