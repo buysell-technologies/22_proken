@@ -25,7 +25,7 @@ class SlackController < ApplicationController
 
     action_id = @params['actions'][0]['action_id']
 
-    # pp @params
+    pp @params
     
     if action_id == 'actionId-1'
       sender_id = @params['user']['id']
