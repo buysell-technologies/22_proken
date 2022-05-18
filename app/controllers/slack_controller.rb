@@ -6,11 +6,15 @@ class SlackController < ApplicationController
 
   protect_from_forgery
 
-  def create 
+  def create
     @header = request.headers
     @body = JSON.parse(request.body.read)
+    pp "------------------------------"
+    pp @body
     case @body['type']
     when 'url_verification'
+      pp "----------render--------------------"
+      pp @body
       render json: @body
     when 'event_callback'
       respond
@@ -26,7 +30,7 @@ class SlackController < ApplicationController
     action_id = @params['actions'][0]['action_id']
 
     # pp @params
-    
+
     if action_id == 'actionId-1'
       sender_id = @params['user']['id']
       getter_id = @params['view']['state']['values']['2RI6']['users_select-action']['selected_user']
@@ -82,5 +86,3 @@ class SlackController < ApplicationController
     )
   end
 end
-
-
