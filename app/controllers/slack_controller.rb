@@ -6,7 +6,7 @@ class SlackController < ApplicationController
 
   protect_from_forgery
 
-  def create 
+  def create
     @header = request.headers
     @body = JSON.parse(request.body.read)
     case @body['type']
@@ -25,8 +25,8 @@ class SlackController < ApplicationController
 
     action_id = @params['actions'][0]['action_id']
 
-    pp @params
-    
+    # pp @params
+
     if action_id == 'actionId-1'
       sender_id = @params['user']['id']
       getter_id = @params['view']['state']['values']['2RI6']['users_select-action']['selected_user']
@@ -51,10 +51,6 @@ class SlackController < ApplicationController
       message2_origin = @params['message']['blocks'][1]['text']['text']
       message2 = message2_origin.delete!("&gt; ")
       recommend_message = @params['actions'][0]['text']['text']
-
-      pp message1
-      pp message2
-      pp recommend_message
 
       SlackNotifier.new.send_from_thread(
         sender=adder_user,
@@ -82,5 +78,3 @@ class SlackController < ApplicationController
     )
   end
 end
-
-
