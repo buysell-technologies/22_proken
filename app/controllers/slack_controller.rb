@@ -52,10 +52,6 @@ class SlackController < ApplicationController
       message2 = message2_origin.delete!("&gt; ")
       recommend_message = @params['actions'][0]['text']['text']
 
-      pp message1
-      pp message2
-      pp recommend_message
-
       SlackNotifier.new.send_from_thread(
         sender=adder_user,
         message1=message1,
@@ -78,7 +74,8 @@ class SlackController < ApplicationController
     pp "user_id"
     pp user_uid
     pp "client"
-    pp client.users_info(user: user_uid)['user']['real_name']
+    pp client.users_info(user: user_uid)
+    pp "333333333"
     client.views_publish(
       token=ENV['BOT_USER_ACCESS_TOKEN'],
       user_id=user_uid,
