@@ -79,6 +79,10 @@ class SlackController < ApplicationController
   def views_publish()
     user_uid = params[:event][:user]
     client = Slack::Web::Client.new
+    pp "user_id"
+    pp user_uid
+    pp "client"
+    pp client.users_info(user: user_uid)['user']['real_name']
     client.views_publish(
       token=ENV['BOT_USER_ACCESS_TOKEN'],
       user_id=user_uid,
