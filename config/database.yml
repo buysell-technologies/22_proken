@@ -38,8 +38,8 @@ production:
   <<: *default
   database: <%= ENV['DB_DATABASE'] %>
   adapter: postgresql
-  encoding: utf8mb4
-  charset: utf8mb4
+  encoding: UTF8
+  charset: UTF8
   collation: utf8mb4_general_ci
   host: <%= ENV['DB_HOST'] %>
   username: <%= ENV['DB_USERNAME'] %>
