@@ -40,7 +40,7 @@ production:
   adapter: postgresql
   encoding: UTF8
   charset: UTF8
-  collation: utf8mb4_general_ci
+  collation: en_US.UTF-8
   host: <%= ENV['DB_HOST'] %>
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
