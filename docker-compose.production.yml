@@ -8,7 +8,7 @@ services:
   #     POSTGRES_PASSWORD: password
   app:
     build: .
-    command: bundle exec puma -C config/puma.rb -e production
+    command: bundle exec puma -C config/puma/production.rb -e production
     volumes:
       - .:/22_proken
       - public-data:/22_proken/public
@@ -20,7 +20,7 @@ services:
     #   - db
   web:
     build:
-      context: ./nginx_docker
+      context: ./nginx_docker/production/
     volumes:
       - public-data:/22_proken/public
       - tmp-data:/22_proken/tmp/sockets/

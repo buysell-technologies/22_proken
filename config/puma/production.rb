@@ -3,8 +3,8 @@ threads threads_count, threads_count
 
 # Specifies the `environment` that Puma will run in.
 #
-environment ENV.fetch("RAILS_ENV") { "development" }
-app_root = File.expand_path("../..", __FILE__)
+environment "development"
+app_root = File.expand_path("../../..", __FILE__)
 bind "unix://#{app_root}/tmp/sockets/puma.sock"
 
 # Specifies the `pidfile` that Puma will use.
