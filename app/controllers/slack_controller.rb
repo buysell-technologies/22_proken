@@ -107,10 +107,10 @@ class SlackController < ApplicationController
       thread_ts = @params['message']['metadata']['event_payload']['title']
       thread = SlackNotifier.new.get_thread(thread_ts)
       thread_first_ts = thread[:messages].first[:ts]
-      # SlackNotifier.new.open_reply_modal(
-      #   trigger_id: trigger_id,
-      #   private_metadata: thread_first_ts
-      # )
+      SlackNotifier.new.open_reply_modal(
+        trigger_id: trigger_id,
+        private_metadata: thread_first_ts
+      )
     when 'open-done-modal'
       trigger_id = @params['trigger_id']
       thread_ts = @params['message']['metadata']['event_payload']['title']
