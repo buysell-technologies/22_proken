@@ -6,97 +6,174 @@ class SlackController < ApplicationController
 
   protect_from_forgery
 
-  def create 
+  def create
     @header = request.headers
     @body = JSON.parse(request.body.read)
+
     case @body['type']
     when 'url_verification'
       render json: @body
     when 'event_callback'
+      pp '------------------------@body----------------------'
+      pp @body
       respond
-    # when '送信が送られたときのタイプ'
-    #   pp "ここでbodyを見て送った人とかの情報とってnoticcerみたいなメッセージ送信のうやつで送ればよさそう"
-    end
-  end
-
-  def action
-    client = Slack::Web::Client.new
-    @params = JSON.parse(params[:payload])
-
-    pp "----------------"
-    # pp JSON.parse(request.body.read)
-
-    pp @params
-
-    action_id = @params['actions'][0]['action_id']
-    
-    if action_id == 'actionId-1'
-      sender_id = @params['user']['id']
-      sender_user = client.users_info(user: sender_id)['user']['real_name']
-      pp sender_user
-
-      getter_block_id = @params['view']['blocks'][2]['block_id']
-      pp getter_block_id
-      getter_id = @params['view']['state']['values'][getter_block_id]['users_select-action']['selected_user']
-      getter_user = client.users_info(user: getter_id)['user']['real_name']
-
-      value_block_id = @params['view']['blocks'][3]['block_id']
-      value = @params['view']['state']['values'][value_block_id]['multi_static_select-action']['selected_option']['text']['text']
-      pp value
-
-      message_block_id = @params['view']['blocks'][4]['block_id']
-      message = @params['view']['state']['values'][message_block_id]['plain_text_input-action']['value']
-      pp message
-
-
-      SlackNotifier.new.send_from_home(
-        sender=sender_user,
-        getter=getter_user,
-        value=value,
-        message=message
-      )
-    elsif action_id == 'sasuga-from-thread'
-      pp "sasuga-thread"
-      pp @params
-      adder_id = @params['user']['id']
-      adder_user = client.users_info(user: adder_id)['user']['real_name']
-      message1_origin = @params['message']['blocks'][0]['text']['text']
-      message1 = message1_origin.match(/さんが(.*)/).to_s
-      message2_origin = @params['message']['blocks'][1]['text']['text']
-      message2 = message2_origin.delete!("&gt; ")
-      recommend_message = @params['actions'][0]['text']['text']
-
-      pp message1
-      pp message2
-      pp recommend_message
-
-      SlackNotifier.new.send_from_thread(
-        sender=adder_user,
-        message1=message1,
-        message2=message2
-      )
     end
   end
 
   def respond
+    pp "-------------------------------------------"
+    pp params
+
     if params[:event][:type] == 'app_home_opened'
-      pp "aa"
-      views_publish
-    elsif params[:event][:type] == 'message' && params[:event][:text].present?
-      p "ここは使い方でよさそう"
+      user_uid = params[:event][:user]
+      views_publish(user_uid)
+    elsif params[:event][:type] == 'message' && params[:event][:thread_ts].present? && params[:event][:bot_id].nil? && User.find_by(token: params[:event][:client_msg_id]).nil?
+      # pp "-----------params------------"
+      pp "DM判定"
+      pp params[:event]
+      reply_notion
     end
   end
 
-  def views_publish
-    pp "aa"
-    user_uid = params[:event][:user]
+  def views_publish(user_uid)
     client = Slack::Web::Client.new
+
     client.views_publish(
       token: ENV['BOT_USER_ACCESS_TOKEN'],
       user_id: "#{user_uid}",
-      view: '{"type":"home","blocks":[{"type":"header","text":{"type":"plain_text","text":"感謝を送ろう","emoji":true}},{"type":"divider"},{"type":"input","element":{"type":"users_select","placeholder":{"type":"plain_text","text":"選択","emoji":true},"action_id":"users_select-action"},"label":{"type":"plain_text","text":"メンバーの選択","emoji":true}},{"type":"input","element":{"type":"static_select","placeholder":{"type":"plain_text","text":"選択","emoji":true},"options":[{"text":{"type":"plain_text","text":"さすが","emoji":true},"value":"value-0"},{"text":{"type":"plain_text","text":"すぐ","emoji":true},"value":"value-1"},{"text":{"type":"plain_text","text":"おそれず","emoji":true},"value":"value-2"},{"text":{"type":"plain_text","text":"みずから","emoji":true},"value":"value-3"}],"action_id":"multi_static_select-action"},"label":{"type":"plain_text","text":"バリューの選択","emoji":true}},{"type":"input","element":{"type":"plain_text_input","placeholder":{"type":"plain_text","text":"例: PRのレビューがはやくて助かりました","emoji":true},"multiline":true,"action_id":"plain_text_input-action"},"label":{"type":"plain_text","text":"感謝する内容","emoji":true}},{"type":"actions","elements":[{"type":"button","text":{"type":"plain_text","emoji":true,"text":"送信"},"style":"primary","value":"click_me_123","action_id":"actionId-1"}]}]}'
+      view: '{"type":"home","blocks":[{"type":"input","element":{"type":"plain_text_input","multiline":true,"action_id":"plain_text_input-action"},"label":{"type":"plain_text","text":"疑問を投稿しよう","emoji":true}},{"type":"actions","elements":[{"type":"button","text":{"type":"plain_text","text":"投稿する","emoji":true},"style":"primary","value":"send_question","action_id":"send-question"}]}]}'
     )
   end
+
+  def action
+    # client = Slack::Web::Client.new
+    @params = JSON.parse(params[:payload])
+    # pp "@params['type']: #{@params['type']}"
+    
+    if @params['type'] == "view_submission"
+      reply_message_block_id = @params['view']['blocks'][0]['block_id']
+      reply_message = @params['view']['state']['values'][reply_message_block_id]['plain_text_input-action']['value']
+
+      case @params['view']['blocks'][0]['label']['text']
+      when "返信しよう"
+        thread_ts = @params['view']['private_metadata']
+        thread = SlackNotifier.new.get_thread(thread_ts)
+        thread_first_ts = thread[:messages].first[:ts]
+        thread_first_message = thread[:messages][0][:blocks][0][:text][:text]
+        
+        SlackNotifier.new.reply(
+          message: reply_message,
+          thread_ts: thread_ts
+        )
+      when "感謝を送ろう"
+        c = Slack::Web::Client.new
+
+        thread_ts = JSON.parse(@params['view']['private_metadata'])['thread_id']
+        thread = SlackNotifier.new.get_thread(thread_ts)
+        thread_first_ts = thread[:messages].first[:ts]
+        thread_first_message = thread[:messages][0][:blocks][0][:text][:text]
+
+        sender_id = JSON.parse(@params['view']['private_metadata'])['sender_id']
+        sender = c.users_info(user: sender_id)['user']['real_name']
+
+        SlackNotifier.new.reply(
+          message: reply_message,
+          thread_ts: thread_ts
+        )
+
+        SlackNotifier.new.update_message_done(
+          message: thread_first_message,
+          ts: thread_first_ts, 
+          solver: sender
+        )
+      end
+    end
+
+    action_id = @params['actions'][0]['action_id']
+
+    case action_id
+    when 'send-question'
+    
+      message_block_id = @params['view']['blocks'][0]['block_id']
+      user = @params['user']['id']
+      message = @params['view']['state']['values'][message_block_id]['plain_text_input-action']['value']
+
+      SlackNotifier.new.send_question(
+        message: message,
+        user: user
+      )
+    when 'open-reply-modal'
+      pp "------------------open-reply-modal----------------------------"
+      trigger_id = @params['trigger_id']
+      thread_ts = @params['message']['metadata']['event_payload']['title']
+      thread = SlackNotifier.new.get_thread(thread_ts)
+      thread_first_ts = thread[:messages].first[:ts]
+      SlackNotifier.new.open_reply_modal(
+        trigger_id: trigger_id,
+        private_metadata: thread_first_ts
+      )
+    when 'open-done-modal'
+      trigger_id = @params['trigger_id']
+      thread_ts = @params['message']['metadata']['event_payload']['title']
+      thread = SlackNotifier.new.get_thread(thread_ts)
+      thread_first_ts = thread[:messages].first[:ts]
+      thread_first_message = thread[:messages][0][:blocks][0][:text][:text]
+      sender_id = @params['message']['metadata']['event_payload']['id']
+      SlackNotifier.new.open_done_modal(
+        trigger_id: trigger_id,
+        private_metadata: thread_first_ts,
+        sender_id: sender_id
+      )
+    end
+  end
+
+  
+  def reply_notion
+    pp "-------------------start get_reply----------------------------"
+    pp params
+    
+    client = Slack::Web::Client.new
+    
+    sender_id = params[:event][:user]
+    pp '================='
+    pp sender_id
+    
+    thread_ts = params[:event][:thread_ts]
+    getter_id = User.find_by(thread_id: thread_ts).user_id
+    thread_first_message = User.find_by(thread_id: thread_ts).message
+    thread_last_message = params[:event][:blocks][0][:elements][0][:elements][0][:text]
+    token = params[:event][:client_msg_id]
+    
+    pp "-------------------fin get_reply----------------------------"
+    
+    SlackNotifier.new.send_dm(
+      message: thread_last_message,
+      user_id: getter_id,
+      thread_first_ts: thread_ts,
+      sender_id: sender_id
+    )
+    User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
+    pp "--------------start update_message-----------------"
+    # 親スレッドのステータスを「解答中」に更新
+    SlackNotifier.new.update_message_process(
+      message: thread_first_message,
+      ts: thread_ts
+      )
+    pp "--------------end update_message-----------------"
+  end
+
+
+  def post_lgtm
+    if params["event"]["reaction"] == "grinning"
+      sender_id= params["event"]["user"]
+      # geter_id= params["event"]["type"]["item_user"]
+
+      pp "greatingh"
+      pp params
+      client = Slack::Web::Client.new
+      pp client.users_info(user:"U03F82DV2H3")['user']['real_name']
+      pp "greatingh"
+      SlackNotifier.new.post_lgtm(sender_id) 
+    end
+  end
 end
-
-
