@@ -11,21 +11,12 @@ class SlackNotifier
     @client = Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME)
   end
 
-  def send_dm(message, user_id, thread_first_ts, sender_id)  
-    # c = Slack::Web::Client.new
-    # DMを開く
-    pp "-------------res前----------------"
+  def send_dm(message, user_id, thread_first_ts, sender_id)
     c = Slack::Web::Client.new
     #メンバーid
     res = c.conversations_open(users: user_id)
-    # pp "------res-------"
-    # pp res
-    # pp "------------------"
     dm_id = res['channel']['id']
-    pp "------dm_id-------"
-    # pp dm_id
-    # pp "------------------"
-    
+
     post_message = c.chat_postMessage(
       channel: dm_id,
       blocks: JSON.dump([
@@ -67,7 +58,7 @@ class SlackNotifier
       metadata: JSON.dump({
         "event_type": "dm",
         "event_payload": {
-          "id": "#{sender_id}", 
+          "id": "#{sender_id}",
           "title": "#{thread_first_ts}"
         }
       })
@@ -94,8 +85,7 @@ class SlackNotifier
   def send_question(message: message, user: user)
     c = Slack::Web::Client.new
     channel_id = ENV['SLACK_CHANNEL_ID']
-    pp user
-    
+
     post_data = c.chat_postMessage(
       channel: channel_id,
       blocks: JSON.dump([
@@ -119,14 +109,11 @@ class SlackNotifier
         }
       ])
     )
-    pp "-----------------post_data-----------------"
-    pp post_data
+
     User.create(user_id: user, thread_id: post_data['ts'], message: message, token: nil)
   end
 
   def open_reply_modal(trigger_id: trigger_id, private_metadata: private_metadata)
-    # user_id = params[:user][:id]
-    # pp JSON.parse(request.body.read)
     client = Slack::Web::Client.new
 
     client.views_open(
@@ -170,8 +157,6 @@ class SlackNotifier
   end
 
   def open_done_modal(trigger_id: trigger_id, private_metadata: private_metadata, sender_id: sender_id)
-    # user_id = params[:user][:id]
-    # pp JSON.parse(request.body.read)
     client = Slack::Web::Client.new
 
     client.views_open(
@@ -221,10 +206,10 @@ class SlackNotifier
 
   def fugafuga
     c = Slack::Web::Client.new
-    
+
     res = c.conversations_open(users: "U03FU17KL82")
     dm_id = res.body['channel']['id']
-    
+
     c.chat_postMessage(
       channel: dm_id,
       blocks: JSON.dump([
@@ -259,9 +244,8 @@ class SlackNotifier
   end
 
   def reply(message: message, thread_ts: thread_ts)
-    pp '-------reply--------'
     c = Slack::Web::Client.new
-    
+
     c.chat_postMessage(
       channel: ENV['SLACK_CHANNEL_ID'],
       text: message,
@@ -271,7 +255,7 @@ class SlackNotifier
 
   def update_message_process(message: message, ts: ts)
     c = Slack::Web::Client.new
-    
+
     res = c.chat_update(
       channel: ENV['SLACK_CHANNEL_ID'],
       ts: ts,
@@ -297,16 +281,11 @@ class SlackNotifier
       ])
     )
 
-    pp "---------update res----------------"
-    pp res
-    pp "-----------------------------------"
   end
 
   def update_message_done(message: message, ts: ts, solver: solver)
     c = Slack::Web::Client.new
 
-    pp solver
-    
     c.chat_update(
       channel: ENV['SLACK_CHANNEL_ID'],
       ts: ts,
@@ -321,7 +300,7 @@ class SlackNotifier
             "type": "button",
             "text": {
               "type": "plain_text",
-              "text": "#{solver}が解決しました",
+              "text": "#{solver}さんが解決しました",
               "emoji": true
             },
             "value": "click_me_123",

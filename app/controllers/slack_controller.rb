@@ -14,23 +14,15 @@ class SlackController < ApplicationController
     when 'url_verification'
       render json: @body
     when 'event_callback'
-      pp '------------------------@body----------------------'
-      pp @body
       respond
     end
   end
 
   def respond
-    pp "-------------------------------------------"
-    pp params
-
     if params[:event][:type] == 'app_home_opened'
       user_uid = params[:event][:user]
       views_publish(user_uid)
     elsif params[:event][:type] == 'message' && params[:event][:thread_ts].present? && params[:event][:bot_id].nil? && User.find_by(token: params[:event][:client_msg_id]).nil?
-      # pp "-----------params------------"
-      pp "DM判定"
-      pp params[:event]
       reply_notion
     end
   end
@@ -46,10 +38,7 @@ class SlackController < ApplicationController
   end
 
   def action
-    # client = Slack::Web::Client.new
     @params = JSON.parse(params[:payload])
-    # pp "@params['type']: #{@params['type']}"
-    
     if @params['type'] == "view_submission"
       reply_message_block_id = @params['view']['blocks'][0]['block_id']
       reply_message = @params['view']['state']['values'][reply_message_block_id]['plain_text_input-action']['value']
@@ -60,7 +49,7 @@ class SlackController < ApplicationController
         thread = SlackNotifier.new.get_thread(thread_ts)
         thread_first_ts = thread[:messages].first[:ts]
         thread_first_message = thread[:messages][0][:blocks][0][:text][:text]
-        
+
         SlackNotifier.new.reply(
           message: reply_message,
           thread_ts: thread_ts
@@ -83,7 +72,7 @@ class SlackController < ApplicationController
 
         SlackNotifier.new.update_message_done(
           message: thread_first_message,
-          ts: thread_first_ts, 
+          ts: thread_first_ts,
           solver: sender
         )
       end
@@ -93,7 +82,7 @@ class SlackController < ApplicationController
 
     case action_id
     when 'send-question'
-    
+
       message_block_id = @params['view']['blocks'][0]['block_id']
       user = @params['user']['id']
       message = @params['view']['state']['values'][message_block_id]['plain_text_input-action']['value']
@@ -103,7 +92,6 @@ class SlackController < ApplicationController
         user
       )
     when 'open-reply-modal'
-      pp "------------------open-reply-modal----------------------------"
       trigger_id = @params['trigger_id']
       thread_ts = @params['message']['metadata']['event_payload']['title']
       thread = SlackNotifier.new.get_thread(thread_ts)
@@ -127,25 +115,18 @@ class SlackController < ApplicationController
     end
   end
 
-  
+
   def reply_notion
-    pp "-------------------start get_reply----------------------------"
-    pp params
-    
     client = Slack::Web::Client.new
-    
+
     sender_id = params[:event][:user]
-    pp '================='
-    pp sender_id
-    
+
     thread_ts = params[:event][:thread_ts]
     getter_id = User.find_by(thread_id: thread_ts).user_id
     thread_first_message = User.find_by(thread_id: thread_ts).message
     thread_last_message = params[:event][:blocks][0][:elements][0][:elements][0][:text]
     token = params[:event][:client_msg_id]
-    
-    pp "-------------------fin get_reply----------------------------"
-    
+
     SlackNotifier.new.send_dm(
       message: thread_last_message,
       user_id: getter_id,
@@ -153,13 +134,11 @@ class SlackController < ApplicationController
       sender_id: sender_id
     )
     User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
-    pp "--------------start update_message-----------------"
     # 親スレッドのステータスを「解答中」に更新
     SlackNotifier.new.update_message_process(
       message: thread_first_message,
       ts: thread_ts
       )
-    pp "--------------end update_message-----------------"
   end
 
 
@@ -167,13 +146,8 @@ class SlackController < ApplicationController
     if params["event"]["reaction"] == "grinning"
       sender_id= params["event"]["user"]
       # geter_id= params["event"]["type"]["item_user"]
-
-      pp "greatingh"
-      pp params
       client = Slack::Web::Client.new
-      pp client.users_info(user:"U03F82DV2H3")['user']['real_name']
-      pp "greatingh"
-      SlackNotifier.new.post_lgtm(sender_id) 
+      SlackNotifier.new.post_lgtm(sender_id)
     end
   end
 end
