@@ -89,7 +89,7 @@ class SlackController < ApplicationController
 
       SlackNotifier.new.send_question(
         message: message,
-        user: message
+        user: user
       )
     when 'open-reply-modal'
       trigger_id = @params['trigger_id']
