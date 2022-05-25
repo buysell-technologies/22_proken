@@ -120,19 +120,30 @@ class SlackController < ApplicationController
     client = Slack::Web::Client.new
 
     sender_id = params[:event][:user]
+    pp "paramas"
+    pp params
+
+    pp "sender_id"
+    pp sender_id
 
     thread_ts = params[:event][:thread_ts]
+    pp "thread_ts"
+    pp thread_ts
     getter_id = User.find_by(thread_id: thread_ts).user_id
     thread_first_message = User.find_by(thread_id: thread_ts).message
+    pp "getter_id"
+    pp getter_id
     thread_last_message = params[:event][:blocks][0][:elements][0][:elements][0][:text]
     token = params[:event][:client_msg_id]
-
+    pp "dm開始"
     SlackNotifier.new.send_dm(
       message: thread_last_message,
       user_id: getter_id,
       thread_first_ts: thread_ts,
       sender_id: sender_id
     )
+
+    pp "dm終わり"
     User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
     # 親スレッドのステータスを「解答中」に更新
     SlackNotifier.new.update_message_process(
