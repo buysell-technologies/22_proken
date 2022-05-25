@@ -291,11 +291,11 @@ class SlackNotifier
     c = Slack::Web::Client.new
 
     c.chat_postMessage(
-      status_code: 200,
       channel: ENV['SLACK_CHANNEL_ID'],
       text: message,
       thread_ts: thread_ts,
     )
+    render status: 200
   end
 
   def update_message_process(message: message, ts: ts)
