@@ -209,8 +209,39 @@ class SlackNotifier
     )
   end
 
-  def update_modal_view
-    pp "p"
+  def update_modal_view(title: title, view_id: view_id)
+    client.views_open(
+      token: ENV['BOT_USER_ACCESS_TOKEN'],
+      view: JSON.dump({
+        "type": "modal",
+        "title": {
+          "type": "plain_text",
+          "text": "ソルブ",
+          "emoji": true
+        },
+        "close": {
+          "type": "plain_text",
+          "text": "投稿しました",
+          "emoji": true
+        },
+        "blocks": [
+          {
+            "type": "input",
+            "element": {
+              "type": "plain_text_input",
+              "multiline": true,
+              "action_id": "plain_text_input-action"
+            },
+            "label": {
+              "type": "plain_text",
+              "text": "#{title}",
+              "emoji": true
+            }
+          }
+        ]
+      }),
+      view_id: view_id,
+    )
   end
 
   def fugafuga

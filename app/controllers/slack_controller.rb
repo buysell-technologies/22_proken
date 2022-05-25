@@ -42,8 +42,9 @@ class SlackController < ApplicationController
     if @params['type'] == "view_submission"
       reply_message_block_id = @params['view']['blocks'][0]['block_id']
       reply_message = @params['view']['state']['values'][reply_message_block_id]['plain_text_input-action']['value']
+      view_title = @params['view']['blocks'][0]['label']['text']
 
-      case @params['view']['blocks'][0]['label']['text']
+      case view_title
       when "返信しよう"
         pp '------------------params--------------'
         pp @params
@@ -51,10 +52,15 @@ class SlackController < ApplicationController
         thread = SlackNotifier.new.get_thread(thread_ts)
         thread_first_ts = thread[:messages].first[:ts]
         thread_first_message = thread[:messages][0][:blocks][0][:text][:text]
+        view_id = @params['view']['id']
 
         SlackNotifier.new.reply(
           message: reply_message,
           thread_ts: thread_ts
+        )
+        SlackNotifier.new.update_modal_view(
+          title: view_title,
+          view_id: view_id
         )
       when "感謝を送ろう"
         c = Slack::Web::Client.new
