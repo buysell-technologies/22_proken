@@ -58,10 +58,6 @@ class SlackController < ApplicationController
           message: reply_message,
           thread_ts: thread_ts
         )
-        SlackNotifier.new.update_modal_view(
-          title: view_title,
-          view_id: view_id
-        )
       when "感謝を送ろう"
         c = Slack::Web::Client.new
 
@@ -132,6 +128,8 @@ class SlackController < ApplicationController
 
 
   def reply_notion
+    pp "reply_notion"
+    pp @params
     client = Slack::Web::Client.new
 
     sender_id = params[:event][:user]

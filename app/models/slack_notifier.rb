@@ -209,75 +209,6 @@ class SlackNotifier
     )
   end
 
-  def update_modal_view(title: title, view_id: view_id)
-    client.views_open(
-      token: ENV['BOT_USER_ACCESS_TOKEN'],
-      view: JSON.dump({
-        "response_action": "update",
-        "view": {
-          "type": "modal",
-          "title": {
-            "type": "plain_text",
-            "text": "ソルブ",
-            "emoji": true
-          },
-          "close": {
-            "type": "plain_text",
-            "text": "投稿しました",
-            "emoji": true
-          },
-          "blocks": [
-            {
-              "type": "input",
-              "element": {
-                "type": "plain_text_input",
-                "multiline": true,
-                "action_id": "plain_text_input-action"
-              },
-              "label": {
-                "type": "plain_text",
-                "text": "#{title}",
-                "emoji": true
-              }
-            }
-          ]
-        }
-      }),
-      view_id: view_id,
-    )
-  end
-
-  def fugafuga
-    c = Slack::Web::Client.new
-
-    res = c.conversations_open(users: "U03FU17KL82")
-    dm_id = res.body['channel']['id']
-
-    c.chat_postMessage(
-      channel: dm_id,
-      blocks: JSON.dump([
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": "aa"
-          },
-          "accessory": {
-            "type": "button",
-            "text": {
-              "type": "plain_text",
-              "text": "未解答",
-              "emoji": true
-            },
-            "style": "danger",
-            "value": "click_me_123",
-            "action_id": "button-action"
-          }
-        }
-      ])
-    )
-  end
-
   def get_thread(thread_ts)
     c = Slack::Web::Client.new
     c.conversations_replies(
@@ -288,13 +219,15 @@ class SlackNotifier
 
   def reply(message: message, thread_ts: thread_ts)
     pp '-------reply--------'
-    c = Slack::Web::Client.new
+    pp message
+    pp thread_ts
+    # c = Slack::Web::Client.new
 
-    c.chat_postMessage(
-      channel: ENV['SLACK_CHANNEL_ID'],
-      text: message,
-      thread_ts: thread_ts,
-    )
+    # c.chat_postMessage(
+    #   channel: ENV['SLACK_CHANNEL_ID'],
+    #   text: message,
+    #   thread_ts: thread_ts,
+    # )
   end
 
   def update_message_process(message: message, ts: ts)
