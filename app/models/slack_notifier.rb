@@ -11,7 +11,7 @@ class SlackNotifier
     @client = Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME)
   end
 
-  def send_dm(message, user_id: user_id, thread_first_ts: thread_first_ts, sender_id: sender_id) 
+  def send_dm(message: message, user_id: user_id, thread_first_ts: thread_first_ts, sender_id: sender_id) 
     pp "-------------res前----------------"
     c = Slack::Web::Client.new
     res = c.conversations_open(users: user_id)
