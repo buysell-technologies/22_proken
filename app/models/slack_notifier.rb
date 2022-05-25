@@ -16,9 +16,7 @@ class SlackNotifier
     c = Slack::Web::Client.new
     pp "client"
     pp c
-    res = c.conversations_open(users: user_id)
-    pp "res"
-    pp res
+    pp res = c.conversations_open(users: user_id)
 
     post_message = c.chat_postMessage(
       channel: dm_id,
