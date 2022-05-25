@@ -14,7 +14,8 @@ class SlackNotifier
   def send_dm(message, user_id: user_id, thread_first_ts: thread_first_ts, sender_id: sender_id)
     pp "send_dm"
     c = Slack::Web::Client.new
-
+    pp "client"
+    pp c
     res = c.conversations_open(users: user_id)
     pp "res"
     pp res
