@@ -14,10 +14,8 @@ class SlackNotifier
   def send_dm(message, user_id: user_id, thread_first_ts: thread_first_ts, sender_id: sender_id) 
     pp "-------------res前----------------"
     c = Slack::Web::Client.new
-    #メンバーid
     res = c.conversations_open(users: user_id)
     dm_id = res['channel']['id']
-    
     post_message = c.chat_postMessage(
       channel: dm_id,
       blocks: JSON.dump([
