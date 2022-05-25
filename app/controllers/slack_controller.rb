@@ -75,6 +75,13 @@ class SlackController < ApplicationController
           ts: thread_first_ts,
           solver: sender
         )
+
+        @thanks_user = Thank.find-by(user_id: sender_id)
+        if thanks_user.nil?
+          Thank.create(user_id: sender_id, count: 1)
+        else
+          @thanks_user.update(count: @thanks_user.count + 1)
+        end
       end
     end
 
