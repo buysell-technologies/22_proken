@@ -131,6 +131,8 @@ class SlackController < ApplicationController
     pp thread_ts
     getter_id = User.find_by(thread_id: thread_ts).user_id
     thread_first_message = User.find_by(thread_id: thread_ts).message
+    pp "getter_id"
+    pp getter_id
     thread_last_message = params[:event][:blocks][0][:elements][0][:elements][0][:text]
     token = params[:event][:client_msg_id]
     pp "dm開始"
