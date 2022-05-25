@@ -311,7 +311,7 @@ class SlackNotifier
             "type": "button",
             "text": {
               "type": "plain_text",
-              "text": "#{solver}が解決しました",
+              "text": "#{solver}さんが解決しました",
               "emoji": true
             },
             "value": "click_me_123",
