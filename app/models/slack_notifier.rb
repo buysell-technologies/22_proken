@@ -11,11 +11,14 @@ class SlackNotifier
     @client = Slack::Notifier.new(WEBHOOK_URL, channel: CHANNEL, username: USER_NAME)
   end
 
-  def send_dm(message, user_id: user_id, thread_first_ts: thread_first_ts, sender_id: sender_id)  
+  def send_dm(message, user_id: user_id, thread_first_ts: thread_first_ts, sender_id: sender_id)
+    pp "send_dm"
     c = Slack::Web::Client.new
-    
+
     res = c.conversations_open(users: user_id)
-    
+    pp "res"
+    pp res
+
     post_message = c.chat_postMessage(
       channel: dm_id,
       blocks: JSON.dump([
@@ -57,7 +60,7 @@ class SlackNotifier
       metadata: JSON.dump({
         "event_type": "dm",
         "event_payload": {
-          "id": "#{sender_id}", 
+          "id": "#{sender_id}",
           "title": "#{thread_first_ts}"
         }
       })
@@ -85,7 +88,7 @@ class SlackNotifier
     c = Slack::Web::Client.new
     channel_id = ENV['SLACK_CHANNEL_ID']
     pp user
-    
+
     post_data = c.chat_postMessage(
       channel: channel_id,
       blocks: JSON.dump([
@@ -211,10 +214,10 @@ class SlackNotifier
 
   def fugafuga
     c = Slack::Web::Client.new
-    
+
     res = c.conversations_open(users: "U03FU17KL82")
     dm_id = res.body['channel']['id']
-    
+
     c.chat_postMessage(
       channel: dm_id,
       blocks: JSON.dump([
@@ -251,7 +254,7 @@ class SlackNotifier
   def reply(message: message, thread_ts: thread_ts)
     pp '-------reply--------'
     c = Slack::Web::Client.new
-    
+
     c.chat_postMessage(
       channel: ENV['SLACK_CHANNEL_ID'],
       text: message,
@@ -261,7 +264,7 @@ class SlackNotifier
 
   def update_message_process(message: message, ts: ts)
     c = Slack::Web::Client.new
-    
+
     res = c.chat_update(
       channel: ENV['SLACK_CHANNEL_ID'],
       ts: ts,
@@ -296,7 +299,7 @@ class SlackNotifier
     c = Slack::Web::Client.new
 
     pp solver
-    
+
     c.chat_update(
       channel: ENV['SLACK_CHANNEL_ID'],
       ts: ts,
