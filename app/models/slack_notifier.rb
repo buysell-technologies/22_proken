@@ -295,7 +295,6 @@ class SlackNotifier
       text: message,
       thread_ts: thread_ts,
     )
-    render status: 200
   end
 
   def update_message_process(message: message, ts: ts)
