@@ -99,8 +99,8 @@ class SlackController < ApplicationController
       message = @params['view']['state']['values'][message_block_id]['plain_text_input-action']['value']
 
       SlackNotifier.new.send_question(
-        message: message,
-        user: user
+        message,
+        user
       )
     when 'open-reply-modal'
       pp "------------------open-reply-modal----------------------------"
