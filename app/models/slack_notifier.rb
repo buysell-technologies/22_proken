@@ -209,6 +209,10 @@ class SlackNotifier
     )
   end
 
+  def update_modal_view
+    pp "p"
+  end
+
   def fugafuga
     c = Slack::Web::Client.new
 

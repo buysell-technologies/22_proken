@@ -45,6 +45,8 @@ class SlackController < ApplicationController
 
       case @params['view']['blocks'][0]['label']['text']
       when "返信しよう"
+        pp '------------------params--------------'
+        pp @params
         thread_ts = @params['view']['private_metadata']
         thread = SlackNotifier.new.get_thread(thread_ts)
         thread_first_ts = thread[:messages].first[:ts]
