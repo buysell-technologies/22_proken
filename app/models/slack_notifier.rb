@@ -124,6 +124,7 @@ class SlackNotifier
       trigger_id: trigger_id,
       view: JSON.dump({
         "type": "modal",
+        "callback_id": "reply_modal",
         "title": {
           "type": "plain_text",
           "text": "ソルブ",
