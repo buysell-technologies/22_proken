@@ -218,9 +218,7 @@ class SlackNotifier
   end
 
   def reply(message: message, thread_ts: thread_ts)
-    pp '-------reply--------'
-    pp message
-    pp thread_ts
+    # pp '-------reply--------'
     # c = Slack::Web::Client.new
 
     # c.chat_postMessage(

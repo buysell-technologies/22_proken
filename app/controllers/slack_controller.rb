@@ -157,12 +157,12 @@ class SlackController < ApplicationController
     )
 
     pp "dm終わり"
-    User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
-    # 親スレッドのステータスを「解答中」に更新
-    SlackNotifier.new.update_message_process(
-      message: thread_first_message,
-      ts: thread_ts
-      )
+    # User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
+    # # 親スレッドのステータスを「解答中」に更新
+    # SlackNotifier.new.update_message_process(
+    #   message: thread_first_message,
+    #   ts: thread_ts
+    #   )
   end
 
 
