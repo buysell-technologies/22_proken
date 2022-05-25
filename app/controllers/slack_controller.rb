@@ -23,6 +23,7 @@ class SlackController < ApplicationController
       user_uid = params[:event][:user]
       views_publish(user_uid)
     elsif params[:event][:type] == 'message' && params[:event][:thread_ts].present? && params[:event][:bot_id].nil? && User.find_by(token: params[:event][:client_msg_id]).nil?
+      pp "message"
       reply_notion
     end
   end
@@ -117,6 +118,7 @@ class SlackController < ApplicationController
 
 
   def reply_notion
+    pp "reply_notion"
     client = Slack::Web::Client.new
 
     sender_id = params[:event][:user]
