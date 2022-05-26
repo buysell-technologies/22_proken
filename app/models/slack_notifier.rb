@@ -167,6 +167,7 @@ class SlackNotifier
     client.views_open(
       token: ENV['BOT_USER_ACCESS_TOKEN'],
       trigger_id: trigger_id,
+      response_action: 'update',
       view: JSON.dump({
         "type": "modal",
         "callback_id": "modal-id",
@@ -225,7 +226,6 @@ class SlackNotifier
 
     c.chat_postMessage(
       channel: ENV['SLACK_CHANNEL_ID'],
-      callback_id: "reply_modal",
       text: message,
       thread_ts: thread_ts,
     )
