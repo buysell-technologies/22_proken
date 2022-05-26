@@ -99,7 +99,7 @@ class SlackNotifier
             "type": "button",
             "text": {
               "type": "plain_text",
-              "text": "未解答",
+              "text": "未回答",
               "emoji": true
             },
             "style": "danger",
@@ -246,7 +246,7 @@ class SlackNotifier
             "type": "button",
             "text": {
               "type": "plain_text",
-              "text": "解答中",
+              "text": "回答中",
               "emoji": true
             },
             "style": "primary",
