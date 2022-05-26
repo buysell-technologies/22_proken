@@ -118,7 +118,7 @@ class SlackNotifier
     # user_id = params[:user][:id]
     # pp JSON.parse(request.body.read)
     client = Slack::Web::Client.new
-
+    ack()
     client.views_open(
       token: ENV['BOT_USER_ACCESS_TOKEN'],
       trigger_id: trigger_id,
