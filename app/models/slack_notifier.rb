@@ -170,6 +170,7 @@ class SlackNotifier
       trigger_id: trigger_id,
       view: JSON.dump({
         "type": "modal",
+        "block_id": "replay_block",
         "title": {
           "type": "plain_text",
           "text": "ソルブ",
