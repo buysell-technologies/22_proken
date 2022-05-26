@@ -149,20 +149,20 @@ class SlackController < ApplicationController
     thread_last_message = params[:event][:blocks][0][:elements][0][:elements][0][:text]
     token = params[:event][:client_msg_id]
     pp "dm開始"
-    # SlackNotifier.new.send_dm(
-    #   message: thread_last_message,
-    #   user_id: getter_id,
-    #   thread_first_ts: thread_ts,
-    #   sender_id: sender_id
-    # )
+    SlackNotifier.new.send_dm(
+      message: thread_last_message,
+      user_id: getter_id,
+      thread_first_ts: thread_ts,
+      sender_id: sender_id
+    )
 
     pp "dm終わり"
-    # User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
-    # # 親スレッドのステータスを「解答中」に更新
-    # SlackNotifier.new.update_message_process(
-    #   message: thread_first_message,
-    #   ts: thread_ts
-    #   )
+    User.create(user_id: getter_id, thread_id: thread_ts, message: thread_last_message, token: token)
+    # 親スレッドのステータスを「解答中」に更新
+    SlackNotifier.new.update_message_process(
+      message: thread_first_message,
+      ts: thread_ts
+      )
   end
 
 
