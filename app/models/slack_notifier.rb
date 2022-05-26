@@ -169,7 +169,6 @@ class SlackNotifier
       trigger_id: trigger_id,
       view: JSON.dump({
         "type": "modal",
-        "response_action": 'update',
         "callback_id": "modal-id",
         "title": {
           "type": "plain_text",
