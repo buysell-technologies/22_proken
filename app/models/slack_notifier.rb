@@ -157,6 +157,11 @@ class SlackNotifier
         "private_metadata": private_metadata
       })
     )
+    client.views_push(
+      token: ENV['BOT_USER_ACCESS_TOKEN'],
+      trigger_id: trigger_id,
+      view: ""
+    )
   end
 
   def open_done_modal(trigger_id: trigger_id, private_metadata: private_metadata, sender_id: sender_id)
