@@ -157,11 +157,6 @@ class SlackNotifier
         "private_metadata": private_metadata
       })
     )
-    client.views_push(
-      token: ENV['BOT_USER_ACCESS_TOKEN'],
-      trigger_id: trigger_id,
-      view: ""
-    )
   end
 
   def open_done_modal(trigger_id: trigger_id, private_metadata: private_metadata, sender_id: sender_id)
@@ -174,7 +169,7 @@ class SlackNotifier
       trigger_id: trigger_id,
       view: JSON.dump({
         "type": "modal",
-        "block_id": "replay_block",
+        "callback_id": "modal-id",
         "title": {
           "type": "plain_text",
           "text": "ソルブ",
@@ -193,6 +188,7 @@ class SlackNotifier
         "blocks": [
           {
             "type": "input",
+            "block_id": "replay_block",
             "element": {
               "type": "plain_text_input",
               "multiline": true,
@@ -229,9 +225,11 @@ class SlackNotifier
 
     c.chat_postMessage(
       channel: ENV['SLACK_CHANNEL_ID'],
+      callback_id: "reply_modal",
       text: message,
       thread_ts: thread_ts,
     )
+
   end
 
   def update_message_process(message: message, ts: ts)
