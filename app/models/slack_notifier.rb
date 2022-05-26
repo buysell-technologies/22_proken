@@ -118,7 +118,6 @@ class SlackNotifier
     # user_id = params[:user][:id]
     # pp JSON.parse(request.body.read)
     client = Slack::Web::Client.new
-    ack()
     client.views_open(
       token: ENV['BOT_USER_ACCESS_TOKEN'],
       trigger_id: trigger_id,
@@ -158,6 +157,7 @@ class SlackNotifier
         "private_metadata": private_metadata
       })
     )
+    render status: 200
   end
 
   def open_done_modal(trigger_id: trigger_id, private_metadata: private_metadata, sender_id: sender_id)
