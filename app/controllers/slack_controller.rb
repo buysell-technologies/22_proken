@@ -111,6 +111,7 @@ class SlackController < ApplicationController
         trigger_id: trigger_id,
         private_metadata: thread_first_ts
       )
+      render status:200
     when 'open-done-modal'
       trigger_id = @params['trigger_id']
       thread_ts = @params['message']['metadata']['event_payload']['title']
