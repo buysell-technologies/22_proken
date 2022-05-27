@@ -154,7 +154,8 @@ class SlackNotifier
             }
           }
         ],
-        "private_metadata": private_metadata
+        "private_metadata": private_metadata,
+        "clear_on_close": true
       })
     )
   end
